@@ -3,160 +3,100 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Le Bistro du Coin — Digital Menu</title>
+  <title>Admin Dashboard — Le Bistro du Coin</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #121212;
-      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
       padding: 20px;
-      max-width: 800px;
+      max-width: 700px;
       margin: 0 auto;
     }
-    header {
-      text-align: center;
-      padding: 20px 0;
-      border-bottom: 2px solid #333;
-      margin-bottom: 20px;
-    }
-    header h1 {
-      font-size: 2.2rem;
-      color: #d4af37;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
-    header p {
-      color: #888;
-      font-style: italic;
-      margin-top: 5px;
-    }
-    /* Category Filter Navigation Bar */
-    .filter-nav {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 15px;
+    h1 { color: #1b4332; margin-bottom: 20px; text-align: center; }
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       margin-bottom: 25px;
-      scrollbar-width: thin;
-      scrollbar-color: #d4af37 #1e1e1e;
     }
-    .filter-btn {
-      background: #1e1e1e;
-      color: #bbb;
-      border: 1px solid #333;
-      padding: 8px 16px;
-      border-radius: 20px;
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background: #1b4332;
+      color: white;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 4px;
       cursor: pointer;
-      white-space: nowrap;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
-    .filter-btn:hover, .filter-btn.active {
-      background: #d4af37;
-      color: #121212;
-      border-color: #d4af37;
+      font-size: 1rem;
       font-weight: bold;
     }
-    .category-section {
-      margin-bottom: 35px;
-    }
-    .category-title {
-      font-size: 1.3rem;
-      color: #d4af37;
-      border-bottom: 1px solid #333;
-      padding-bottom: 8px;
-      margin-bottom: 15px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    button:hover { background: #2d6a4f; }
+    .btn-danger { background: #b71c1c; margin-top: 5px; }
+    .btn-danger:hover { background: #d32f2f; }
+    .product-item {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
     }
-    .menu-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-    @media (min-width: 600px) {
-      .menu-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-    .menu-card {
-      background: #1e1e1e;
-      padding: 12px 15px;
-      border-radius: 8px;
-      border: 1px solid #2a2a2a;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-    .menu-card:hover {
-      border-color: #d4af37;
-      transform: translateY(-2px);
-    }
-    .item-image {
-      width: 55px;
-      height: 55px;
+    .product-img {
+      width: 45px;
+      height: 45px;
       border-radius: 6px;
       object-fit: cover;
-      background: #2a2a2a;
-      flex-shrink: 0;
+      margin-right: 10px;
+      background: #eee;
     }
-    .item-info {
-      flex: 1;
-    }
-    .item-name {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: #fff;
-    }
-    .item-desc {
-      font-size: 0.8rem;
-      color: #999;
-      margin-top: 3px;
-    }
-    .item-price {
-      font-weight: bold;
-      color: #d4af37;
-      font-size: 1rem;
-      white-space: nowrap;
-      margin-left: 10px;
-    }
-    #loading {
-      text-align: center;
-      padding: 50px;
-      color: #d4af37;
-      font-size: 1.2rem;
-    }
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid #222;
-      color: #666;
-      font-size: 0.85rem;
-    }
+    .product-details { display: flex; align-items: center; }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>Le Bistro du Coin</h1>
-    <p>Digital Menu</p>
-  </header>
+  <h1>Manage Menu Products</h1>
 
-  <!-- Quick Category Filter Bar -->
-  <div id="filter-container" class="filter-nav"></div>
+  <div class="card">
+    <h3 id="form-title">Add New Product</h3>
+    <input type="hidden" id="prod-id" />
+    
+    <label>Product Name</label>
+    <input type="text" id="prod-name" placeholder="e.g. Tusker Lager" />
 
-  <div id="loading">Loading menu...</div>
-  <div id="menu-container"></div>
+    <label>Category</label>
+    <select id="prod-category">
+      <option value="Food">Food</option>
+      <option value="Special Meals">Special Meals</option>
+      <option value="Drinks">Drinks</option>
+      <option value="Soft Drinks">Soft Drinks</option>
+      <option value="Water">Water</option>
+      <option value="Tea">Tea</option>
+      <option value="Liqueurs">Liqueurs</option>
+      <option value="Wine">Wine</option>
+    </select>
 
-  <footer>
-    <p>DIGITAL MENU • I•G•D</p>
-  </footer>
+    <label>Price (RWF)</label>
+    <input type="number" id="prod-price" placeholder="e.g. 2500" />
+
+    <label>Image URL (Optional)</label>
+    <input type="text" id="prod-image" placeholder="https://example.com/photo.jpg" />
+
+    <button id="save-btn" onclick="saveProduct()">Save Product</button>
+  </div>
+
+  <div class="card">
+    <h3>Current Products</h3>
+    <div id="product-list">Loading...</div>
+  </div>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -176,110 +116,83 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const menuContainer = document.getElementById('menu-container');
-    const filterContainer = document.getElementById('filter-container');
-    const loading = document.getElementById('loading');
+    const nameInput = document.getElementById('prod-name');
+    const catInput = document.getElementById('prod-category');
+    const priceInput = document.getElementById('prod-price');
+    const imageInput = document.getElementById('prod-image');
+    const idInput = document.getElementById('prod-id');
+    const listContainer = document.getElementById('product-list');
 
-    const categoryIcons = {
-      "Food": "🍽️",
-      "Special Meals": "⭐",
-      "Drinks": "🍺",
-      "Soft Drinks": "🥤",
-      "Water": "💧",
-      "Tea": "☕",
-      "Liqueurs": "🍾",
-      "Wine": "🍷"
-    };
-
-    let allProducts = [];
-    let currentCategory = 'All';
-
+    // Load Products
     db.collection("products").onSnapshot((snapshot) => {
-      loading.style.display = 'none';
-      allProducts = [];
-
+      listContainer.innerHTML = '';
       snapshot.forEach((doc) => {
-        allProducts.push({ id: doc.id, ...doc.data() });
-      });
+        const p = doc.data();
+        const div = document.createElement('div');
+        div.className = 'product-item';
+        
+        const imgTag = p.image ? `<img src="${p.image}" class="product-img">` : '';
 
-      renderMenu();
+        div.innerHTML = `
+          <div class="product-details">
+            ${imgTag}
+            <div>
+              <strong>${p.name}</strong><br>
+              <small>${p.category} — ${Number(p.price).toLocaleString()} RWF</small>
+            </div>
+          </div>
+          <div>
+            <button style="padding:6px 12px; width:auto;" onclick="editProduct('${doc.id}', '${p.name}', '${p.category}', ${p.price}, '${p.image || ''}')">Edit</button>
+            <button class="btn-danger" style="padding:6px 12px; width:auto;" onclick="deleteProduct('${doc.id}')">Delete</button>
+          </div>
+        `;
+        listContainer.appendChild(div);
+      });
     });
 
-    function renderMenu() {
-      menuContainer.innerHTML = '';
-      filterContainer.innerHTML = '';
+    // Save or Update Product
+    async function saveProduct() {
+      const name = nameInput.value.trim();
+      const category = catInput.value;
+      const price = Number(priceInput.value);
+      const image = imageInput.value.trim();
+      const id = idInput.value;
 
-      if (allProducts.length === 0) {
-        menuContainer.innerHTML = '<p style="text-align:center;">No items found.</p>';
+      if (!name || !price) {
+        alert("Please enter both a name and price.");
         return;
       }
 
-      // Extract unique categories
-      const categories = ['All', ...new Set(allProducts.map(p => p.category || 'Other'))];
-
-      // Build Category Filter Buttons
-      categories.forEach(cat => {
-        const btn = document.createElement('button');
-        btn.className = `filter-btn ${currentCategory === cat ? 'active' : ''}`;
-        const icon = categoryIcons[cat] || (cat === 'All' ? '📋' : '');
-        btn.textContent = `${icon} ${cat}`.trim();
-        btn.onclick = () => {
-          currentCategory = cat;
-          renderMenu();
-        };
-        filterContainer.appendChild(btn);
-      });
-
-      // Filter products based on selection
-      const filtered = currentCategory === 'All' 
-        ? allProducts 
-        : allProducts.filter(p => (p.category || 'Other') === currentCategory);
-
-      // Group by category for display
-      const grouped = {};
-      filtered.forEach(p => {
-        const cat = p.category || 'Other';
-        if (!grouped[cat]) grouped[cat] = [];
-        grouped[cat].push(p);
-      });
-
-      // Render sections
-      for (const cat in grouped) {
-        const section = document.createElement('div');
-        section.className = 'category-section';
-
-        const icon = categoryIcons[cat] || '📋';
-        section.innerHTML = `<h2 class="category-title"><span>${icon}</span> ${cat}</h2>`;
-
-        const grid = document.createElement('div');
-        grid.className = 'menu-grid';
-
-        grouped[cat].forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'menu-card';
-
-          const formattedPrice = Number(item.price).toLocaleString();
-          const descHtml = item.description ? `<div class="item-desc">${item.description}</div>` : '';
-          
-          // Image handling (if an image URL or base64 is added in the future)
-          const imgHtml = item.image 
-            ? `<img src="${item.image}" class="item-image" alt="${item.name}">` 
-            : '';
-
-          card.innerHTML = `
-            ${imgHtml}
-            <div class="item-info">
-              <div class="item-name">${item.name}</div>
-              ${descHtml}
-            </div>
-            <div class="item-price">${formattedPrice} RWF</div>
-          `;
-          grid.appendChild(card);
-        });
-
-        section.appendChild(grid);
-        menuContainer.appendChild(section);
+      if (id) {
+        await db.collection("products").doc(id).update({ name, category, price, image });
+      } else {
+        await db.collection("products").add({ name, category, price, image });
       }
+
+      resetForm();
+    }
+
+    function editProduct(id, name, category, price, image) {
+      idInput.value = id;
+      nameInput.value = name;
+      catInput.value = category;
+      priceInput.value = price;
+      imageInput.value = image;
+      document.getElementById('form-title').textContent = "Edit Product";
+    }
+
+    async function deleteProduct(id) {
+      if (confirm("Are you sure you want to delete this item?")) {
+        await db.collection("products").doc(id).delete();
+      }
+    }
+
+    function resetForm() {
+      idInput.value = '';
+      nameInput.value = '';
+      priceInput.value = '';
+      imageInput.value = '';
+      document.getElementById('form-title').textContent = "Add New Product";
     }
   </script>
 </body>
