@@ -16,9 +16,9 @@
     }
     header {
       text-align: center;
-      padding: 25px 0;
+      padding: 20px 0;
       border-bottom: 2px solid #333;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
     header h1 {
       font-size: 2.2rem;
@@ -31,11 +31,38 @@
       font-style: italic;
       margin-top: 5px;
     }
+    /* Category Filter Navigation Bar */
+    .filter-nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+      scrollbar-width: thin;
+      scrollbar-color: #d4af37 #1e1e1e;
+    }
+    .filter-btn {
+      background: #1e1e1e;
+      color: #bbb;
+      border: 1px solid #333;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: #d4af37;
+      color: #121212;
+      border-color: #d4af37;
+      font-weight: bold;
+    }
     .category-section {
       margin-bottom: 35px;
     }
     .category-title {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       color: #d4af37;
       border-bottom: 1px solid #333;
       padding-bottom: 8px;
@@ -58,37 +85,45 @@
     }
     .menu-card {
       background: #1e1e1e;
-      padding: 15px;
+      padding: 12px 15px;
       border-radius: 8px;
       border: 1px solid #2a2a2a;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 12px;
       transition: transform 0.2s, border-color 0.2s;
     }
     .menu-card:hover {
       border-color: #d4af37;
       transform: translateY(-2px);
     }
+    .item-image {
+      width: 55px;
+      height: 55px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #2a2a2a;
+      flex-shrink: 0;
+    }
     .item-info {
       flex: 1;
-      padding-right: 10px;
     }
     .item-name {
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: #fff;
     }
     .item-desc {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: #999;
-      margin-top: 4px;
+      margin-top: 3px;
     }
     .item-price {
       font-weight: bold;
       color: #d4af37;
-      font-size: 1.05rem;
+      font-size: 1rem;
       white-space: nowrap;
+      margin-left: 10px;
     }
     #loading {
       text-align: center;
@@ -112,6 +147,9 @@
     <h1>Le Bistro du Coin</h1>
     <p>Digital Menu</p>
   </header>
+
+  <!-- Quick Category Filter Bar -->
+  <div id="filter-container" class="filter-nav"></div>
 
   <div id="loading">Loading menu...</div>
   <div id="menu-container"></div>
@@ -139,6 +177,7 @@
     const db = firebase.firestore();
 
     const menuContainer = document.getElementById('menu-container');
+    const filterContainer = document.getElementById('filter-container');
     const loading = document.getElementById('loading');
 
     const categoryIcons = {
@@ -152,24 +191,60 @@
       "Wine": "🍷"
     };
 
+    let allProducts = [];
+    let currentCategory = 'All';
+
     db.collection("products").onSnapshot((snapshot) => {
       loading.style.display = 'none';
-      menuContainer.innerHTML = '';
+      allProducts = [];
 
-      if (snapshot.empty) {
+      snapshot.forEach((doc) => {
+        allProducts.push({ id: doc.id, ...doc.data() });
+      });
+
+      renderMenu();
+    });
+
+    function renderMenu() {
+      menuContainer.innerHTML = '';
+      filterContainer.innerHTML = '';
+
+      if (allProducts.length === 0) {
         menuContainer.innerHTML = '<p style="text-align:center;">No items found.</p>';
         return;
       }
 
-      const categories = {};
-      snapshot.forEach((doc) => {
-        const p = doc.data();
-        const cat = p.category || 'Other';
-        if (!categories[cat]) categories[cat] = [];
-        categories[cat].push(p);
+      // Extract unique categories
+      const categories = ['All', ...new Set(allProducts.map(p => p.category || 'Other'))];
+
+      // Build Category Filter Buttons
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = `filter-btn ${currentCategory === cat ? 'active' : ''}`;
+        const icon = categoryIcons[cat] || (cat === 'All' ? '📋' : '');
+        btn.textContent = `${icon} ${cat}`.trim();
+        btn.onclick = () => {
+          currentCategory = cat;
+          renderMenu();
+        };
+        filterContainer.appendChild(btn);
       });
 
-      for (const cat in categories) {
+      // Filter products based on selection
+      const filtered = currentCategory === 'All' 
+        ? allProducts 
+        : allProducts.filter(p => (p.category || 'Other') === currentCategory);
+
+      // Group by category for display
+      const grouped = {};
+      filtered.forEach(p => {
+        const cat = p.category || 'Other';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(p);
+      });
+
+      // Render sections
+      for (const cat in grouped) {
         const section = document.createElement('div');
         section.className = 'category-section';
 
@@ -179,14 +254,20 @@
         const grid = document.createElement('div');
         grid.className = 'menu-grid';
 
-        categories[cat].forEach((item) => {
+        grouped[cat].forEach(item => {
           const card = document.createElement('div');
           card.className = 'menu-card';
 
           const formattedPrice = Number(item.price).toLocaleString();
           const descHtml = item.description ? `<div class="item-desc">${item.description}</div>` : '';
+          
+          // Image handling (if an image URL or base64 is added in the future)
+          const imgHtml = item.image 
+            ? `<img src="${item.image}" class="item-image" alt="${item.name}">` 
+            : '';
 
           card.innerHTML = `
+            ${imgHtml}
             <div class="item-info">
               <div class="item-name">${item.name}</div>
               ${descHtml}
@@ -199,7 +280,7 @@
         section.appendChild(grid);
         menuContainer.appendChild(section);
       }
-    });
+    }
   </script>
 </body>
 </html>
