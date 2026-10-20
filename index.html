@@ -5,59 +5,120 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Le Bistro du Coin — Digital Menu</title>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Arial, sans-serif;
-      background-color: #0d0d0d;
-      color: #fff;
-      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
       padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
     }
-    h1 {
+    header {
       text-align: center;
-      color: #d4af37;
-      margin-bottom: 5px;
-    }
-    .subtitle {
-      text-align: center;
-      color: #aaa;
+      padding: 25px 0;
+      border-bottom: 2px solid #333;
       margin-bottom: 25px;
+    }
+    header h1 {
+      font-size: 2.2rem;
+      color: #d4af37;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    header p {
+      color: #888;
       font-style: italic;
+      margin-top: 5px;
+    }
+    .category-section {
+      margin-bottom: 35px;
     }
     .category-title {
+      font-size: 1.4rem;
       color: #d4af37;
       border-bottom: 1px solid #333;
-      padding-bottom: 5px;
-      margin-top: 25px;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
       text-transform: uppercase;
       letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .menu-item {
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 600px) {
+      .menu-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .menu-card {
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
       display: flex;
       justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px stroke #222;
+      align-items: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .menu-card:hover {
+      border-color: #d4af37;
+      transform: translateY(-2px);
+    }
+    .item-info {
+      flex: 1;
+      padding-right: 10px;
     }
     .item-name {
-      font-weight: bold;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #fff;
+    }
+    .item-desc {
+      font-size: 0.85rem;
+      color: #999;
+      margin-top: 4px;
     }
     .item-price {
-      color: #d4af37;
       font-weight: bold;
+      color: #d4af37;
+      font-size: 1.05rem;
+      white-space: nowrap;
     }
     #loading {
       text-align: center;
-      color: #888;
+      padding: 50px;
+      color: #d4af37;
+      font-size: 1.2rem;
+    }
+    footer {
+      text-align: center;
       margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #222;
+      color: #666;
+      font-size: 0.85rem;
     }
   </style>
 </head>
 <body>
 
-  <h1>Le Bistro du Coin</h1>
-  <div class="subtitle">Digital Menu</div>
+  <header>
+    <h1>Le Bistro du Coin</h1>
+    <p>Digital Menu</p>
+  </header>
 
-  <div id="loading">Loading menu items...</div>
+  <div id="loading">Loading menu...</div>
   <div id="menu-container"></div>
+
+  <footer>
+    <p>DIGITAL MENU • I•G•D</p>
+  </footer>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -80,7 +141,17 @@
     const menuContainer = document.getElementById('menu-container');
     const loading = document.getElementById('loading');
 
-    // Real-time synchronization
+    const categoryIcons = {
+      "Food": "🍽️",
+      "Special Meals": "⭐",
+      "Drinks": "🍺",
+      "Soft Drinks": "🥤",
+      "Water": "💧",
+      "Tea": "☕",
+      "Liqueurs": "🍾",
+      "Wine": "🍷"
+    };
+
     db.collection("products").onSnapshot((snapshot) => {
       loading.style.display = 'none';
       menuContainer.innerHTML = '';
@@ -90,7 +161,6 @@
         return;
       }
 
-      // Group products by category
       const categories = {};
       snapshot.forEach((doc) => {
         const p = doc.data();
@@ -99,25 +169,35 @@
         categories[cat].push(p);
       });
 
-      // Display categories and products
       for (const cat in categories) {
-        const catHeader = document.createElement('h2');
-        catHeader.className = 'category-title';
-        catHeader.textContent = cat;
-        menuContainer.appendChild(catHeader);
+        const section = document.createElement('div');
+        section.className = 'category-section';
+
+        const icon = categoryIcons[cat] || '📋';
+        section.innerHTML = `<h2 class="category-title"><span>${icon}</span> ${cat}</h2>`;
+
+        const grid = document.createElement('div');
+        grid.className = 'menu-grid';
 
         categories[cat].forEach((item) => {
-          const itemDiv = document.createElement('div');
-          itemDiv.className = 'menu-item';
-          
-          const formattedPrice = Number(item.price).toLocaleString();
+          const card = document.createElement('div');
+          card.className = 'menu-card';
 
-          itemDiv.innerHTML = `
-            <span class="item-name">${item.name}</span>
-            <span class="item-price">${formattedPrice} RWF</span>
+          const formattedPrice = Number(item.price).toLocaleString();
+          const descHtml = item.description ? `<div class="item-desc">${item.description}</div>` : '';
+
+          card.innerHTML = `
+            <div class="item-info">
+              <div class="item-name">${item.name}</div>
+              ${descHtml}
+            </div>
+            <div class="item-price">${formattedPrice} RWF</div>
           `;
-          menuContainer.appendChild(itemDiv);
+          grid.appendChild(card);
         });
+
+        section.appendChild(grid);
+        menuContainer.appendChild(section);
       }
     });
   </script>
