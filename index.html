@@ -1,161 +1,414 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Le Bistro du Coin — Digital Menu</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173e32">
+  <meta name="description" content="Explore the food and beverage menu at Le Great Hotel.">
+  <title>Le Great Hotel | Digital Menu</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #173e32;
+      --green-light: #245646;
+      --cream: #f8f6f0;
+      --white: #ffffff;
+      --gold: #b69752;
+      --text: #252c28;
+      --muted: #777e78;
+      --border: #e8e4d9;
+      --shadow: 0 8px 28px rgba(35, 48, 39, .06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #121212;
-      color: #e0e0e0;
-      padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
+      font-family: "DM Sans", sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.6;
     }
-    header {
+
+    button {
+      font: inherit;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--green);
+      color: white;
       text-align: center;
-      padding: 20px 0;
-      border-bottom: 2px solid #333;
-      margin-bottom: 20px;
+      padding: 55px 20px 48px;
+      border-bottom: 4px solid var(--gold);
     }
-    header h1 {
-      font-size: 2.2rem;
-      color: #d4af37;
-      letter-spacing: 1.5px;
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      left: -90px;
+      top: -85px;
+    }
+
+    .hero::after {
+      right: -90px;
+      bottom: -100px;
+    }
+
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 54px;
+      height: 54px;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: "Playfair Display", serif;
+      font-size: 25px;
+      margin-bottom: 15px;
+    }
+
+    .eyebrow {
       text-transform: uppercase;
+      letter-spacing: 4px;
+      color: #dfc98e;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 8px;
     }
-    header p {
-      color: #888;
-      font-style: italic;
+
+    .hero h1 {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(34px, 6vw, 56px);
+      line-height: 1.15;
+      font-weight: 600;
+      letter-spacing: .4px;
+    }
+
+    .hero p {
+      color: #d8e0da;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .hero-rule {
+      width: 58px;
+      height: 2px;
+      background: var(--gold);
+      margin: 22px auto 0;
+    }
+
+    .page {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 32px 22px 55px;
+    }
+
+    .intro {
+      text-align: center;
+      margin: 0 auto 28px;
+      max-width: 620px;
+    }
+
+    .intro h2 {
+      font-family: "Playfair Display", serif;
+      font-size: 29px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .intro p {
+      color: var(--muted);
+      font-size: 13px;
       margin-top: 5px;
     }
+
+    .menu-tools {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--cream);
+      padding: 10px 0 16px;
+      margin-bottom: 16px;
+    }
+
     .filter-nav {
       display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
       gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 15px;
-      margin-bottom: 25px;
-      scrollbar-width: thin;
-      scrollbar-color: #d4af37 #1e1e1e;
     }
+
     .filter-btn {
-      background: #1e1e1e;
-      color: #bbb;
-      border: 1px solid #333;
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 9px 17px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: #555d56;
+      background: var(--white);
       cursor: pointer;
-      white-space: nowrap;
-      font-size: 0.9rem;
-      transition: all 0.2s;
+      font-size: 12px;
+      font-weight: 600;
+      transition: .2s ease;
     }
-    .filter-btn:hover, .filter-btn.active {
-      background: #d4af37;
-      color: #121212;
-      border-color: #d4af37;
-      font-weight: bold;
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--green);
+      color: white;
+      border-color: var(--green);
     }
+
+    #loading,
+    #empty,
+    #error {
+      text-align: center;
+      padding: 38px 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    #error {
+      color: #a3352a;
+    }
+
     .category-section {
-      margin-bottom: 35px;
+      margin: 35px 0 42px;
+      scroll-margin-top: 90px;
     }
-    .category-title {
-      font-size: 1.3rem;
-      color: #d4af37;
-      border-bottom: 1px solid #333;
-      padding-bottom: 8px;
-      margin-bottom: 15px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+
+    .category-heading {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
+      margin-bottom: 19px;
     }
+
+    .category-heading h2 {
+      color: var(--green);
+      font-family: "Playfair Display", serif;
+      font-size: 25px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .category-heading .line {
+      height: 1px;
+      flex: 1;
+      background: var(--border);
+    }
+
+    .category-count {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
     .menu-grid {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
     }
-    @media (min-width: 600px) {
-      .menu-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
+
     .menu-card {
-      background: #1e1e1e;
-      padding: 12px 15px;
-      border-radius: 8px;
-      border: 1px solid #2a2a2a;
       display: flex;
       align-items: center;
-      gap: 12px;
-      transition: transform 0.2s, border-color 0.2s;
+      gap: 15px;
+      min-width: 0;
+      padding: 15px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      box-shadow: var(--shadow);
+      transition: border-color .2s, transform .2s;
     }
+
     .menu-card:hover {
-      border-color: #d4af37;
+      border-color: #c9b57f;
       transform: translateY(-2px);
     }
+
     .item-image {
-      width: 55px;
-      height: 55px;
-      border-radius: 6px;
+      width: 82px;
+      height: 82px;
       object-fit: cover;
-      background: #2a2a2a;
       flex-shrink: 0;
+      border-radius: 5px;
+      background: #f0eee6;
     }
+
     .item-info {
       flex: 1;
+      min-width: 0;
     }
+
     .item-name {
+      font-family: "Playfair Display", serif;
+      font-size: 17px;
       font-weight: 600;
-      font-size: 0.95rem;
-      color: #fff;
+      color: var(--green);
+      line-height: 1.35;
+      overflow-wrap: anywhere;
     }
+
     .item-desc {
-      font-size: 0.8rem;
-      color: #999;
-      margin-top: 3px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 5px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
     }
+
+    .item-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
     .item-price {
-      font-weight: bold;
-      color: #d4af37;
-      font-size: 1rem;
+      color: var(--green);
+      font-weight: 700;
+      font-size: 14px;
       white-space: nowrap;
-      margin-left: 10px;
     }
-    #loading {
-      text-align: center;
-      padding: 50px;
-      color: #d4af37;
-      font-size: 1.2rem;
+
+    .currency {
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .6px;
     }
+
     footer {
+      background: #eeeae0;
+      border-top: 1px solid var(--border);
       text-align: center;
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid #222;
-      color: #666;
-      font-size: 0.85rem;
+      padding: 28px 16px;
+    }
+
+    footer strong {
+      font-family: "Playfair Display", serif;
+      font-size: 19px;
+      color: var(--green);
+    }
+
+    footer p {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .footer-line {
+      width: 35px;
+      height: 2px;
+      background: var(--gold);
+      margin: 12px auto;
+    }
+
+    @media (max-width: 650px) {
+      .hero {
+        padding: 38px 16px 34px;
+      }
+
+      .page {
+        padding: 25px 14px 38px;
+      }
+
+      .intro h2 {
+        font-size: 25px;
+      }
+
+      .filter-nav {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 2px 0 8px;
+      }
+
+      .filter-btn {
+        flex-shrink: 0;
+      }
+
+      .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 11px;
+      }
+
+      .category-heading h2 {
+        font-size: 22px;
+      }
+
+      .item-image {
+        width: 72px;
+        height: 72px;
+      }
+
+      .menu-card {
+        padding: 12px;
+        gap: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
 </head>
-<body>
 
-  <header>
-    <h1>Le Bistro du Coin</h1>
-    <p>Digital Menu</p>
+<body>
+  <header class="hero">
+    <div class="brand-mark" aria-hidden="true">G</div>
+    <div class="eyebrow">Hospitality · Taste · Excellence</div>
+    <h1>Le Great Hotel</h1>
+    <p>A thoughtful selection of food and beverages</p>
+    <div class="hero-rule"></div>
   </header>
 
-  <div id="filter-container" class="filter-nav"></div>
-  <div id="loading">Loading menu...</div>
-  <div id="menu-container"></div>
+  <main class="page">
+    <section class="intro">
+      <h2>Our Menu</h2>
+      <p>Discover our selection, thoughtfully prepared for your enjoyment.</p>
+    </section>
+
+    <nav class="menu-tools" aria-label="Menu categories">
+      <div id="filter-container" class="filter-nav"></div>
+    </nav>
+
+    <div id="loading" role="status">Preparing your menu…</div>
+    <div id="error" hidden></div>
+    <div id="menu-container"></div>
+    <div id="empty" hidden>No menu items are available at the moment.</div>
+  </main>
 
   <footer>
-    <p>DIGITAL MENU • I•G•D</p>
+    <strong>Le Great Hotel</strong>
+    <div class="footer-line"></div>
+    <p>Thank you for choosing us.</p>
+    <p>Digital Menu</p>
   </footer>
 
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
@@ -173,97 +426,142 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const menuContainer = document.getElementById('menu-container');
-    const filterContainer = document.getElementById('filter-container');
-    const loading = document.getElementById('loading');
+    const menuContainer = document.getElementById("menu-container");
+    const filterContainer = document.getElementById("filter-container");
+    const loading = document.getElementById("loading");
+    const empty = document.getElementById("empty");
+    const errorBox = document.getElementById("error");
 
     const categoryIcons = {
       "Food": "🍽️",
-      "Special Meals": "⭐",
-      "Drinks": "🍺",
+      "Special Meals": "✦",
+      "Drinks": "🥂",
       "Soft Drinks": "🥤",
       "Water": "💧",
       "Tea": "☕",
-      "Liqueurs": "🍾",
-      "Wine": "🍷"
+      "Coffee": "☕",
+      "Liqueurs": "🍸",
+      "Wine": "🍷",
+      "Beer": "🍺",
+      "Breakfast": "☀️",
+      "Desserts": "✧"
     };
 
     let allProducts = [];
-    let currentCategory = 'All';
+    let currentCategory = "All";
 
-    db.collection("products").onSnapshot((snapshot) => {
-      loading.style.display = 'none';
-      allProducts = [];
-
-      snapshot.forEach((doc) => {
-        allProducts.push({ id: doc.id, ...doc.data() });
-      });
-
-      renderMenu();
-    });
+    function makeElement(tag, className, text) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    }
 
     function renderMenu() {
-      menuContainer.innerHTML = '';
-      filterContainer.innerHTML = '';
+      menuContainer.replaceChildren();
+      filterContainer.replaceChildren();
+      empty.hidden = true;
 
       if (allProducts.length === 0) {
-        menuContainer.innerHTML = '<p style="text-align:center;">No items found.</p>';
+        empty.hidden = false;
         return;
       }
 
-      const categories = ['All', ...new Set(allProducts.map(p => p.category || 'Other'))];
+      const categoryNames = [
+        ...new Set(allProducts.map(p => p.category || "Other"))
+      ].sort((a, b) => a.localeCompare(b));
 
-      categories.forEach(cat => {
-        const btn = document.createElement('button');
-        btn.className = `filter-btn ${currentCategory === cat ? 'active' : ''}`;
-        const icon = categoryIcons[cat] || (cat === 'All' ? '📋' : '');
-        btn.textContent = `${icon} ${cat}`.trim();
-        btn.onclick = () => {
-          currentCategory = cat;
+      const categories = ["All", ...categoryNames];
+
+      if (!categories.includes(currentCategory)) currentCategory = "All";
+
+      categories.forEach(category => {
+        const button = makeElement(
+          "button",
+          "filter-btn" + (currentCategory === category ? " active" : ""),
+          (categoryIcons[category] ? categoryIcons[category] + " " : "") + category
+        );
+
+        button.type = "button";
+        button.setAttribute("aria-pressed", currentCategory === category);
+
+        button.addEventListener("click", () => {
+          currentCategory = category;
           renderMenu();
-        };
-        filterContainer.appendChild(btn);
+        });
+
+        filterContainer.appendChild(button);
       });
 
-      const filtered = currentCategory === 'All' 
-        ? allProducts 
-        : allProducts.filter(p => (p.category || 'Other') === currentCategory);
+      const filtered = currentCategory === "All"
+        ? allProducts
+        : allProducts.filter(p => (p.category || "Other") === currentCategory);
 
-      const grouped = {};
-      filtered.forEach(p => {
-        const cat = p.category || 'Other';
-        if (!grouped[cat]) grouped[cat] = [];
-        grouped[cat].push(p);
+      const grouped = new Map();
+
+      filtered.forEach(product => {
+        const category = product.category || "Other";
+        if (!grouped.has(category)) grouped.set(category, []);
+        grouped.get(category).push(product);
       });
 
-      for (const cat in grouped) {
-        const section = document.createElement('div');
-        section.className = 'category-section';
+      for (const [category, products] of grouped) {
+        const section = makeElement("section", "category-section");
 
-        const icon = categoryIcons[cat] || '📋';
-        section.innerHTML = `<h2 class="category-title"><span>${icon}</span> ${cat}</h2>`;
+        const heading = makeElement("div", "category-heading");
+        const icon = categoryIcons[category];
 
-        const grid = document.createElement('div');
-        grid.className = 'menu-grid';
+        const title = makeElement(
+          "h2",
+          "",
+          (icon ? icon + " " : "") + category
+        );
 
-        grouped[cat].forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'menu-card';
+        heading.appendChild(title);
+        heading.appendChild(makeElement("div", "line"));
+        heading.appendChild(makeElement("span", "category-count", products.length + " items"));
+        section.appendChild(heading);
 
-          const formattedPrice = Number(item.price).toLocaleString();
-          const descHtml = item.description ? `<div class="item-desc">${item.description}</div>` : '';
-          const imgHtml = item.image 
-            ? `<img src="${item.image}" class="item-image" alt="${item.name}">` 
-            : '';
+        const grid = makeElement("div", "menu-grid");
 
-          card.innerHTML = `
-            ${imgHtml}
-            <div class="item-info">
-              <div class="item-name">${item.name}</div>
-              ${descHtml}
-            </div>
-            <div class="item-price">${formattedPrice} RWF</div>
-          `;
+        products.forEach(product => {
+          const card = makeElement("article", "menu-card");
+
+          if (product.image) {
+            const image = makeElement("img", "item-image");
+            image.src = product.image;
+            image.alt = product.name || "Menu item";
+            image.loading = "lazy";
+            image.onerror = () => image.remove();
+            card.appendChild(image);
+          }
+
+          const info = makeElement("div", "item-info");
+          info.appendChild(
+            makeElement("h3", "item-name", product.name || "Menu item")
+          );
+
+          if (product.description) {
+            info.appendChild(
+              makeElement("p", "item-desc", product.description)
+            );
+          }
+
+          const bottom = makeElement("div", "item-bottom");
+          const numericPrice = Number(product.price);
+          const validPrice = Number.isFinite(numericPrice) ? numericPrice : 0;
+
+          bottom.appendChild(
+            makeElement(
+              "span",
+              "item-price",
+              validPrice.toLocaleString("en-US")
+            )
+          );
+          bottom.appendChild(makeElement("span", "currency", "RWF"));
+
+          info.appendChild(bottom);
+          card.appendChild(info);
           grid.appendChild(card);
         });
 
@@ -271,6 +569,27 @@
         menuContainer.appendChild(section);
       }
     }
+
+    db.collection("products").onSnapshot(
+      snapshot => {
+        loading.hidden = true;
+        errorBox.hidden = true;
+
+        allProducts = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        renderMenu();
+      },
+      error => {
+        loading.hidden = true;
+        errorBox.hidden = false;
+        errorBox.textContent =
+          "We could not load the menu. Please check your connection and try again.";
+        console.error("Menu loading error:", error);
+      }
+    );
   </script>
 </body>
 </html>
